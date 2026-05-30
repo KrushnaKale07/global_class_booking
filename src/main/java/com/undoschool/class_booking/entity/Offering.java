@@ -1,7 +1,7 @@
 package com.undoschool.class_booking.entity;
 
+import com.undoschool.class_booking.entity.enums.OfferingStatus;
 import com.undoschool.entity.base.BaseEntity;
-import com.undoschool.entity.enums.OfferingStatus;
 
 import jakarta.persistence.*;
 import lombok.Getter;
