@@ -18,4 +18,9 @@ public class TimezoneUtil {
 
 		return zonedDateTime.toInstant();
 	}
+
+	public static String convertFromUtc(Instant utcTime, String timezone) {
+
+		return utcTime.atZone(ZoneId.of(timezone)).toLocalDateTime().toString();
+	}	
 }

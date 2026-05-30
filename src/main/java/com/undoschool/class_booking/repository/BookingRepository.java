@@ -10,4 +10,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 	boolean existsByParentIdAndOfferingId(Long parentId, Long offeringId);
 
 	List<Booking> findByParentId(Long parentId);
+	
+
 }
