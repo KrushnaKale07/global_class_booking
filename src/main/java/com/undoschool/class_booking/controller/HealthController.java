@@ -1,4 +1,4 @@
-package com.undoschool.controller;
+package com.undoschool.class_booking.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
