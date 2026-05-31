@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.undoschool.class_booking.dto.request.BookingRequest;
 import com.undoschool.class_booking.dto.response.BookingResponse;
@@ -43,6 +44,7 @@ public class ParentServiceImpl implements ParentService {
 		return offerings.stream().map(offering -> mapOffering(offering, timezone)).toList();
 	}
 
+	@Transactional
 	@Override
 	public BookingResponse bookOffering(BookingRequest request) {
 
