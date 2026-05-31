@@ -1,18 +1,15 @@
 package com.undoschool.class_booking.util;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 
 public class TimezoneUtil {
-
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	private TimezoneUtil() {
 	}
 
 	public static Instant convertToUtc(String localDateTime, String timezone) {
 
-		LocalDateTime dateTime = LocalDateTime.parse(localDateTime, FORMATTER);
+		LocalDateTime dateTime = LocalDateTime.parse(localDateTime);
 
 		ZonedDateTime zonedDateTime = dateTime.atZone(ZoneId.of(timezone));
 
@@ -22,5 +19,5 @@ public class TimezoneUtil {
 	public static String convertFromUtc(Instant utcTime, String timezone) {
 
 		return utcTime.atZone(ZoneId.of(timezone)).toLocalDateTime().toString();
-	}	
+	}
 }

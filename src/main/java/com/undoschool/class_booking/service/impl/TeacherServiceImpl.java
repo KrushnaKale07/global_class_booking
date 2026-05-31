@@ -2,6 +2,7 @@ package com.undoschool.class_booking.service.impl;
 
 import com.undoschool.class_booking.dto.request.CreateOfferingRequest;
 import com.undoschool.class_booking.dto.request.CreateSessionRequest;
+import com.undoschool.class_booking.dto.response.OfferingResponse;
 import com.undoschool.class_booking.entity.*;
 import com.undoschool.class_booking.entity.enums.OfferingStatus;
 import com.undoschool.class_booking.exception.ResourceNotFoundException;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class TeacherServiceImpl implements TeacherService {
 	private final CourseRepository courseRepository;
 	private final OfferingRepository offeringRepository;
 	private final SessionRepository sessionRepository;
+	private final OfferingRepository offerings;
 
 	@Override
 	public Offering createOffering(CreateOfferingRequest request) {
@@ -61,8 +64,26 @@ public class TeacherServiceImpl implements TeacherService {
 		sessionRepository.save(session);
 	}
 
+//	@Override
+//	public List<Offering> getTeacherOfferings(Long teacherId) {
+//
+//		 return offeringRepository.findByTeacherId(teacherId);
+////		return offerings
+//				
+////				stream()
+////				.map(offering -> OfferingResponse.builder().id(offering.getId()).offeringName(offering.getName())
+////						.courseName(offering.getCourse().getName()).teacherName(offering.getTeacher().getName())
+////						.build())
+////				.toList();
+//	}
+
 	@Override
-	public List<Offering> getTeacherOfferings(Long teacherId) {
-		return offeringRepository.findByTeacherId(teacherId);
+	public List<OfferingResponse> getTeacherOfferings(Long teacherId) {
+
+		return offeringRepository.findOfferingsWithDetails(teacherId).stream()
+				.map(offering -> OfferingResponse.builder().id(offering.getId()).offeringName(offering.getName())
+						.courseName(offering.getCourse().getTitle()).teacherName(offering.getTeacher().getName())
+						.build())
+				.toList();
 	}
 }

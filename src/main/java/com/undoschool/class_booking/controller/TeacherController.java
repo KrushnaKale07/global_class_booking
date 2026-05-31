@@ -2,6 +2,7 @@ package com.undoschool.class_booking.controller;
 
 import com.undoschool.class_booking.dto.request.CreateOfferingRequest;
 import com.undoschool.class_booking.dto.request.CreateSessionRequest;
+import com.undoschool.class_booking.dto.response.OfferingResponse;
 import com.undoschool.class_booking.entity.Offering;
 import com.undoschool.class_booking.service.TeacherService;
 import jakarta.validation.Valid;
@@ -30,8 +31,13 @@ public class TeacherController {
 		return "Session Added";
 	}
 
+//	@GetMapping("/{teacherId}/offerings")
+//	public List<Offering> getOfferings(@PathVariable Long teacherId) {
+//		return teacherService.getTeacherOfferings(teacherId);
+//	}
+
 	@GetMapping("/{teacherId}/offerings")
-	public List<Offering> getOfferings(@PathVariable Long teacherId) {
+	public List<OfferingResponse> getOfferings(@PathVariable Long teacherId) {
 		return teacherService.getTeacherOfferings(teacherId);
 	}
 }

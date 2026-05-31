@@ -1,5 +1,6 @@
 package com.undoschool.class_booking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.undoschool.entity.base.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Table(name = "courses")
 @Getter
 @Setter
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Course extends BaseEntity {
 
 	@Column(nullable = false)

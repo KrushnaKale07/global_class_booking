@@ -1,6 +1,7 @@
 package com.undoschool.class_booking.entity;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import com.undoschool.class_booking.entity.enums.OfferingStatus;
 import com.undoschool.entity.base.BaseEntity;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Table(name = "offerings")
 @Getter
 @Setter
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Offering extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)

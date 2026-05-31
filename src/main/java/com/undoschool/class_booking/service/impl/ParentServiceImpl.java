@@ -17,6 +17,7 @@ import com.undoschool.class_booking.entity.Session;
 import com.undoschool.class_booking.entity.enums.OfferingStatus;
 import com.undoschool.class_booking.exception.BookingConflictException;
 import com.undoschool.class_booking.exception.DuplicateBookingException;
+import com.undoschool.class_booking.exception.GlobalExceptionHandler;
 import com.undoschool.class_booking.exception.ResourceNotFoundException;
 import com.undoschool.class_booking.repository.BookingRepository;
 import com.undoschool.class_booking.repository.OfferingRepository;
@@ -31,10 +32,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ParentServiceImpl implements ParentService {
 
+	private final GlobalExceptionHandler globalExceptionHandler;
+
 	private final OfferingRepository offeringRepository;
 	private final BookingRepository bookingRepository;
 	private final ParentRepository parentRepository;
-	private final SessionRepository sessionRepository;
 
 	@Override
 	public List<OfferingResponse> getAvailableOfferings(String timezone) {
@@ -88,8 +90,10 @@ public class ParentServiceImpl implements ParentService {
 						.endTime(TimezoneUtil.convertFromUtc(session.getEndTime(), timezone)).build())
 				.toList();
 
-		return OfferingResponse.builder().offeringId(offering.getId()).offeringName(offering.getName())
-				.courseTitle(offering.getCourse().getTitle()).teacherName(offering.getTeacher().getName())
+//		return OfferingResponse.builder().id(null) offeringName(offering.getId()).offeringName(offering.getName())
+
+		return OfferingResponse.builder().id(offering.getId()).offeringName(offering.getName())
+				.courseName(offering.getCourse().getTitle()).teacherName(offering.getTeacher().getName())
 				.sessions(sessions).build();
 	}
 
