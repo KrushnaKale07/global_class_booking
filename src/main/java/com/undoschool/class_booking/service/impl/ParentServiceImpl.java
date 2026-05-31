@@ -12,11 +12,15 @@ import com.undoschool.class_booking.dto.response.SessionResponse;
 import com.undoschool.class_booking.entity.Booking;
 import com.undoschool.class_booking.entity.Offering;
 import com.undoschool.class_booking.entity.Parent;
+import com.undoschool.class_booking.entity.Session;
 import com.undoschool.class_booking.entity.enums.OfferingStatus;
+import com.undoschool.class_booking.exception.BookingConflictException;
+import com.undoschool.class_booking.exception.DuplicateBookingException;
 import com.undoschool.class_booking.exception.ResourceNotFoundException;
 import com.undoschool.class_booking.repository.BookingRepository;
 import com.undoschool.class_booking.repository.OfferingRepository;
 import com.undoschool.class_booking.repository.ParentRepository;
+import com.undoschool.class_booking.repository.SessionRepository;
 import com.undoschool.class_booking.service.ParentService;
 import com.undoschool.class_booking.util.TimezoneUtil;
 
@@ -29,6 +33,7 @@ public class ParentServiceImpl implements ParentService {
 	private final OfferingRepository offeringRepository;
 	private final BookingRepository bookingRepository;
 	private final ParentRepository parentRepository;
+	private final SessionRepository sessionRepository;
 
 	@Override
 	public List<OfferingResponse> getAvailableOfferings(String timezone) {
@@ -42,11 +47,14 @@ public class ParentServiceImpl implements ParentService {
 	public BookingResponse bookOffering(BookingRequest request) {
 
 		Parent parent = parentRepository.findById(request.getParentId())
-				.orElseThrow(() -> new ResourceNotFoundException("Parent not found with id: " + request.getParentId()));
+				.orElseThrow(() -> new ResourceNotFoundException("Parent not found"));
 
-		Offering offering = offeringRepository.findById(request.getOfferingId()).orElseThrow(
-				() -> new ResourceNotFoundException("Offering not found with id: " + request.getOfferingId()));
-		;
+		Offering offering = offeringRepository.findById(request.getOfferingId())
+				.orElseThrow(() -> new ResourceNotFoundException("Offering not found"));
+
+		validateDuplicateBooking(parent.getId(), offering.getId());
+
+		validateBookingConflict(parent.getId(), offering.getId());
 
 		Booking booking = new Booking();
 
@@ -83,4 +91,40 @@ public class ParentServiceImpl implements ParentService {
 				.sessions(sessions).build();
 	}
 
+	private void validateBookingConflict(Long parentId, Long offeringId) {
+
+		List<Booking> existingBookings = bookingRepository.findByParentId(parentId);
+
+		SessionRepository sessionRepository = null;
+		List<Session> newOfferingSessions = sessionRepository.findByOfferingId(offeringId);
+
+		for (Booking booking : existingBookings) {
+
+			List<Session> bookedSessions = sessionRepository.findByOfferingId(booking.getOffering().getId());
+
+			for (Session bookedSession : bookedSessions) {
+
+				for (Session newSession : newOfferingSessions) {
+
+					boolean overlap = bookedSession.getStartTime().isBefore(newSession.getEndTime())
+							&& bookedSession.getEndTime().isAfter(newSession.getStartTime());
+
+					if (overlap) {
+
+						throw new BookingConflictException("Booking conflicts with an existing session");
+					}
+				}
+			}
+		}
+	}
+
+	private void validateDuplicateBooking(Long parentId, Long offeringId) {
+
+		boolean alreadyBooked = bookingRepository.existsByParentIdAndOfferingId(parentId, offeringId);
+
+		if (alreadyBooked) {
+
+			throw new DuplicateBookingException("Parent has already booked this offering");
+		}
+	}
 }
